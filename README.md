@@ -6,3 +6,5 @@ welcome to my github:)
 printf("hello world");
 ## how to install 
 step 1: Download the zip file or use the git clone
+
+commit 1
