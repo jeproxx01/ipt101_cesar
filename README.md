@@ -11,3 +11,8 @@ commit 1
 commit 2
 new commit 1
 new commit 2
+
+## New Feature
+
+--1. Git branch
+--2. Git merge
