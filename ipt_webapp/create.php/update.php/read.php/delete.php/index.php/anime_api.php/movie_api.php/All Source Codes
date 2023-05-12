@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Search</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        *{
+            background-color:Blue;
+            color:yellow;
+        }
+
+        body{
+            background-color:Blue;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .movie-card {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: black;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        .movie-title {
+            font-size: 18px;
+            background-color: black;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .movie-year {
+            font-size: 14px;
+            background-color: black;
+            margin-bottom: 10px;
+        }
+
+        .movie-actors {
+            font-size: 14px;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Movie Search</h1>
+    <form class="form-inline" method="GET">
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="movie-title" class="sr-only">Movie Title</label>
+            <input type="text" class="form-control" id="movie-title" name="title" placeholder="Enter movie title">
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Search</button>
+        <a href="read.php" class="btn btn-warning mb-2 ml-2">View User</a>
+    </form>
+
+    <?php
+    if (isset($_GET['title'])) {
+        $title = urlencode($_GET['title']);
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => "https://online-movie-database.p.rapidapi.com/auto-complete?q={$title}",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_HTTPHEADER => [
+                "X-RapidAPI-Host: online-movie-database.p.rapidapi.com",
+                "X-RapidAPI-Key: a5e279f135msh297719df972ddcfp1b4112jsn628b175192fd"
+            ],
+        ]);
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            $movies = json_decode($response, true);
+
+            if (isset($movies['d']) && !empty($movies['d'])) {
+                echo "<div class='movie-container'>";
+                foreach ($movies['d'] as $movie) {
+                    echo "<div class='movie-card'>";
+                    echo "<h3 class='movie-title'>" . $movie['l'] . "</h3>";
+                    echo "<p class='movie-year'>Year: " . $movie['y'] . "</p>";
+                    echo "<p class='movie-actors'>" . $movie['s'] . "</p>";
+                    echo "</div>";
+                }
+                echo "</div>";
+            } else {
+                echo "<p>No movies found.</p>";
+            }
+        }
+    }
+    ?>
+
+</div>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
